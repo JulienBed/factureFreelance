@@ -5,7 +5,8 @@ WORKDIR /app
 
 # Copy pom.xml and download dependencies
 COPY pom.xml .
-RUN mvn dependency:go-offline
+# Use dependency:resolve instead of go-offline to properly handle BOM
+RUN mvn dependency:resolve dependency:resolve-plugins -DskipTests || true
 
 # Copy source code
 COPY src ./src
