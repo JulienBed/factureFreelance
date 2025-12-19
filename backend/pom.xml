@@ -96,13 +96,7 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-hibernate-validator</artifactId>
     </dependency>
-
-    <!-- CORS -->
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-cors</artifactId>
-    </dependency>
-
+    
     <!-- Config -->
     <dependency>
       <groupId>io.quarkus</groupId>
