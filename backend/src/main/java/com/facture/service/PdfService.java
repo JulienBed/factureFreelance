@@ -156,7 +156,6 @@ public class PdfService {
 
         // Items table header
         yPosition -= 40;
-        float tableTop = yPosition;
         float tableMargin = margin;
 
         contentStream.beginText();
