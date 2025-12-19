@@ -4,8 +4,8 @@ API REST développée avec Quarkus pour la gestion de factures pour indépendant
 
 ## Stack Technique
 
-- **Framework**: Quarkus 3.6
-- **Java**: 17+
+- **Framework**: Quarkus 3.20.2
+- **Java**: 21 (LTS)
 - **Build Tool**: Maven
 - **Base de données**: PostgreSQL 15+
 - **ORM**: Hibernate ORM avec Panache
@@ -14,7 +14,7 @@ API REST développée avec Quarkus pour la gestion de factures pour indépendant
 
 ## Prérequis
 
-- Java 17 ou supérieur
+- Java 21 ou supérieur (LTS)
 - Maven 3.8+
 - PostgreSQL 15+ (ou Docker)
 - OpenSSL (pour générer les clés JWT)

@@ -15,11 +15,11 @@ Facture Freelance est une application web moderne permettant aux travailleurs in
 ## Stack Technique
 
 ### Backend
-- **Framework** : Quarkus 3.6 (Java 17)
+- **Framework** : Quarkus 3.20.2 (Java 21 LTS)
 - **Base de données** : PostgreSQL 15+
 - **ORM** : Hibernate ORM avec Panache
 - **Authentification** : JWT + OTP par email
-- **PDF** : Apache PDFBox
+- **PDF** : Apache PDFBox + Mustang Project (Factur-X)
 - **Email** : Quarkus Mailer
 
 ### Frontend
@@ -63,7 +63,7 @@ Facture Freelance est une application web moderne permettant aux travailleurs in
 ### Prérequis
 
 - Docker et Docker Compose **OU**
-- Java 17+ et Maven 3.8+ (pour le backend)
+- Java 21+ (LTS) et Maven 3.9+ (pour le backend)
 - Node.js 18+ (pour le frontend)
 - PostgreSQL 15+ (si pas de Docker)
 
