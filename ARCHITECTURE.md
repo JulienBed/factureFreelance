@@ -7,14 +7,14 @@ Application SaaS multi-tenant permettant aux indépendants de gérer leurs factu
 ## Stack Technique
 
 ### Backend
-- **Framework** : Quarkus 3.x (Java 17+)
+- **Framework** : Quarkus 3.20.2 (Java 21 LTS)
 - **ORM** : Hibernate ORM avec Panache
 - **Base de données** : PostgreSQL 15+
 - **Authentification** :
   - SmallRye JWT pour les tokens JWT
   - OIDC (OpenID Connect) pour Google SSO
   - OTP par email (Mailer extension)
-- **Génération PDF** : Apache PDFBox ou iText
+- **Génération PDF** : Apache PDFBox + Mustang Project (Factur-X/ZUGFeRD)
 - **Validation** : Bean Validation (Jakarta)
 - **Logs** : JBoss Logging
 - **Sécurité** : SmallRye Security, BCrypt pour hachage

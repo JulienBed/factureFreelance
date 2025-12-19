@@ -4,17 +4,17 @@ API REST développée avec Quarkus pour la gestion de factures pour indépendant
 
 ## Stack Technique
 
-- **Framework**: Quarkus 3.6
-- **Java**: 17+
+- **Framework**: Quarkus 3.20.2
+- **Java**: 21 (LTS)
 - **Build Tool**: Maven
 - **Base de données**: PostgreSQL 15+
 - **ORM**: Hibernate ORM avec Panache
 - **Authentification**: JWT + OTP par email
-- **PDF**: Apache PDFBox
+- **PDF**: Apache PDFBox + Mustang Project (Factur-X/ZUGFeRD)
 
 ## Prérequis
 
-- Java 17 ou supérieur
+- Java 21 ou supérieur (LTS)
 - Maven 3.8+
 - PostgreSQL 15+ (ou Docker)
 - OpenSSL (pour générer les clés JWT)
@@ -101,6 +101,8 @@ java -jar target/quarkus-app/quarkus-run.jar
 - `PUT /api/invoices/{id}` - Modifier une facture
 - `PUT /api/invoices/{id}/status?status=PAID` - Changer le statut
 - `DELETE /api/invoices/{id}` - Supprimer une facture
+- **`GET /api/invoices/{id}/pdf`** - **Télécharger la facture au format Factur-X PDF**
+- `POST /api/invoices/{id}/send` - Envoyer la facture par email (à implémenter)
 
 ## Authentification
 
@@ -150,11 +152,34 @@ backend/
 - ✅ Gestion des clients (CRUD)
 - ✅ Gestion des factures (CRUD)
 - ✅ Numérotation automatique des factures
-- ⏳ Génération de PDF
+- ✅ **Génération de PDF au format Factur-X (PDF/A-3 avec XML EN 16931 embarqué)**
 - ⏳ Envoi de factures par email
 - ⏳ Relances automatiques
 - ⏳ Google OAuth SSO
 - ⏳ Dashboard avec statistiques
+
+## Format Factur-X
+
+Les factures PDF générées sont conformes à la **norme Factur-X** (équivalent français de ZUGFeRD), qui est le standard européen pour la facturation électronique :
+
+- **PDF/A-3** : Format PDF archivable à long terme
+- **XML EN 16931** : Métadonnées structurées embarquées dans le PDF
+- **Lisible par l'homme ET par les machines** : Le PDF est visuellement lisible, et le XML permet l'import automatique dans les logiciels comptables
+- **Conforme aux obligations françaises** : Format obligatoire pour les factures aux organismes publics
+
+### Avantages de Factur-X
+
+1. **Archivage légal** : PDF/A-3 garantit la lisibilité à long terme
+2. **Automatisation comptable** : Le XML embarqué permet l'import automatique des factures
+3. **Interopérabilité** : Compatible avec tous les logiciels conformes EN 16931
+4. **Obligation légale** : Obligatoire en France pour les marchés publics (depuis 2020)
+
+### Vérifier le format Factur-X
+
+Les PDF générés peuvent être vérifiés avec des outils comme :
+- [Factur-X Viewer](https://www.mustangproject.org/)
+- Adobe Acrobat (menu "Outils" > "Pièces jointes")
+- Logiciels comptables compatibles Factur-X
 
 ## Configuration SMTP (Gmail)
 
