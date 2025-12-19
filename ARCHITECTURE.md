@@ -7,32 +7,34 @@ Application SaaS multi-tenant permettant aux indépendants de gérer leurs factu
 ## Stack Technique
 
 ### Backend
-- **Runtime** : Node.js 20+
-- **Framework** : Express.js avec TypeScript
-- **ORM** : Prisma
+- **Framework** : Quarkus 3.x (Java 17+)
+- **ORM** : Hibernate ORM avec Panache
 - **Base de données** : PostgreSQL 15+
 - **Authentification** :
-  - Passport.js pour Google OAuth2
-  - JWT pour la gestion des sessions
-  - OTP par email (Nodemailer)
-- **Génération PDF** : PDFKit
-- **Validation** : Zod
-- **Logs** : Winston
+  - SmallRye JWT pour les tokens JWT
+  - OIDC (OpenID Connect) pour Google SSO
+  - OTP par email (Mailer extension)
+- **Génération PDF** : Apache PDFBox ou iText
+- **Validation** : Bean Validation (Jakarta)
+- **Logs** : JBoss Logging
+- **Sécurité** : SmallRye Security, BCrypt pour hachage
+- **Scheduler** : Quartz pour les tâches planifiées (relances)
 
 ### Frontend
-- **Framework** : React 18+ avec TypeScript
+- **Framework** : Vue.js 3 avec Composition API + TypeScript
 - **Build Tool** : Vite
 - **Styling** : Tailwind CSS
-- **Routing** : React Router v6
-- **State Management** : Context API + React Query
+- **Routing** : Vue Router 4
+- **State Management** : Pinia
 - **HTTP Client** : Axios
-- **Form Management** : React Hook Form
-- **UI Components** : Headless UI + Custom components
+- **Form Management** : VeeValidate
+- **UI Components** : Headless UI Vue + Custom components
 
 ### Infrastructure
 - **Conteneurisation** : Docker + Docker Compose
 - **Reverse Proxy** : Nginx (optionnel)
-- **Variables d'environnement** : dotenv
+- **Variables d'environnement** : application.properties (Quarkus)
+- **Build** : Maven ou Gradle
 
 ## Architecture des Données
 
@@ -89,20 +91,25 @@ Application SaaS multi-tenant permettant aux indépendants de gérer leurs factu
 ### Structure des dossiers
 ```
 backend/
-├── src/
-│   ├── config/         # Configuration (database, auth, email)
-│   ├── models/         # Types TypeScript et Prisma client
-│   ├── routes/         # Routes Express
-│   ├── controllers/    # Logique métier
-│   ├── middleware/     # Auth, validation, error handling
-│   ├── services/       # Services (email, pdf, auth)
-│   ├── utils/          # Helpers
-│   └── index.ts        # Point d'entrée
-├── prisma/
-│   └── schema.prisma   # Schéma de base de données
-├── .env.example
-├── tsconfig.json
-└── package.json
+├── src/main/
+│   ├── java/com/facture/
+│   │   ├── entity/         # Entités JPA (User, Client, Invoice, etc.)
+│   │   ├── repository/     # Repositories Panache
+│   │   ├── resource/       # REST endpoints (JAX-RS)
+│   │   ├── service/        # Logique métier
+│   │   ├── dto/            # Data Transfer Objects
+│   │   ├── security/       # Configuration sécurité, JWT
+│   │   ├── scheduler/      # Jobs planifiés (relances)
+│   │   ├── util/           # Utilitaires
+│   │   └── exception/      # Gestion des exceptions
+│   └── resources/
+│       ├── application.properties
+│       ├── import.sql      # Données initiales (optionnel)
+│       └── META-INF/
+├── src/test/
+│   └── java/com/facture/
+├── pom.xml (ou build.gradle)
+└── .dockerignore
 ```
 
 ### Routes API
@@ -156,19 +163,20 @@ frontend/
 │   │   ├── common/     # Buttons, Inputs, etc.
 │   │   ├── layout/     # Header, Sidebar, Footer
 │   │   └── features/   # Composants métier
-│   ├── pages/          # Pages de l'application
-│   │   ├── Auth/       # Login, Register
+│   ├── views/          # Pages de l'application (Vue Router)
+│   │   ├── Auth/       # Login, Register, OTP
 │   │   ├── Dashboard/  # Dashboard principal
 │   │   ├── Clients/    # Gestion clients
 │   │   ├── Invoices/   # Gestion factures
 │   │   └── Settings/   # Paramètres
-│   ├── contexts/       # Context API (Auth, Theme)
-│   ├── hooks/          # Custom hooks
-│   ├── services/       # API calls
+│   ├── stores/         # Pinia stores (auth, clients, invoices)
+│   ├── composables/    # Composables Vue
+│   ├── services/       # API calls (Axios)
 │   ├── types/          # Types TypeScript
 │   ├── utils/          # Helpers
-│   ├── App.tsx
-│   └── main.tsx
+│   ├── router/         # Configuration Vue Router
+│   ├── App.vue
+│   └── main.ts
 ├── public/
 ├── index.html
 ├── tailwind.config.js
@@ -208,14 +216,15 @@ frontend/
 
 ## Sécurité
 
-- Mots de passe hashés avec bcrypt
-- JWT avec expiration courte (15min) + refresh token
+- Mots de passe hashés avec BCrypt (Elytron Security)
+- JWT avec expiration courte (15min) + refresh token (SmallRye JWT)
 - OTP avec expiration (5min)
 - Rate limiting sur les endpoints sensibles
-- CORS configuré
-- Helmet.js pour les headers de sécurité
-- Validation stricte des inputs (Zod)
+- CORS configuré (Quarkus CORS extension)
+- Headers de sécurité (OWASP recommandations)
+- Validation stricte des inputs (Bean Validation)
 - Multi-tenant : isolation stricte des données par userId
+- HTTPS obligatoire en production
 
 ## Fonctionnalités Clés
 
