@@ -10,14 +10,16 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.jboss.logging.Logger;
-import org.mustangproject.ZUGFeRD.*;
+import org.mustangproject.ZUGFeRD.ZUGFeRDExporterFromA1;
+import org.mustangproject.Item;
 import org.mustangproject.Product;
+import org.mustangproject.TradeParty;
+import org.mustangproject.Contact;
+import org.mustangproject.BankDetails;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 @ApplicationScoped
 public class PdfService {
@@ -28,24 +30,20 @@ public class PdfService {
     public byte[] generateFacturXPdf(Invoice invoice) throws IOException {
         logger.infof("Generating Factur-X PDF for invoice: %s", invoice.invoiceNumber);
 
-        // 1. Create visual PDF
+        // 1. Create visual PDF/A-1
         byte[] visualPdf = createVisualPdf(invoice);
 
-        // 2. Create Factur-X metadata
-        ZUGFeRDExporterFromPDF exporter = new ZUGFeRDExporterFromPDF();
+        // 2. Create Mustangproject Invoice object
+        org.mustangproject.Invoice mustangInvoice = createMustangInvoice(invoice);
 
-        // Load the visual PDF
+        // 3. Create Factur-X PDF/A-3 with embedded XML using ZUGFeRDExporterFromA1
+        ZUGFeRDExporterFromA1 exporter = new ZUGFeRDExporterFromA1();
         exporter.load(visualPdf);
-
-        // 3. Set Factur-X metadata
         exporter.setZUGFeRDVersion(2);
-        exporter.setProfile("EN16931"); // Norme européenne EN 16931
+        exporter.setProfile("EN16931");
+        exporter.setTransaction(mustangInvoice);
 
-        // Create transaction data
-        IZUGFeRDExportableTransaction transaction = createFacturXTransaction(invoice);
-        exporter.setTransaction(transaction);
-
-        // 4. Generate Factur-X PDF (PDF/A-3 with embedded XML)
+        // 5. Export to byte array
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         exporter.export(outputStream);
 
@@ -317,122 +315,79 @@ public class PdfService {
         return baos.toByteArray();
     }
 
-    private IZUGFeRDExportableTransaction createFacturXTransaction(Invoice invoice) {
-        return new IZUGFeRDExportableTransaction() {
-            @Override
-            public String getNumber() {
-                return invoice.invoiceNumber;
-            }
+    private org.mustangproject.Invoice createMustangInvoice(com.facture.entity.Invoice invoice) {
+        // Create sender (TradeParty)
+        TradeParty sender = new TradeParty(
+            invoice.user.companyName != null ? invoice.user.companyName : invoice.user.getFullName(),
+            invoice.user.addressStreet != null ? invoice.user.addressStreet : "",
+            invoice.user.addressPostalCode != null ? invoice.user.addressPostalCode : "",
+            invoice.user.addressCity != null ? invoice.user.addressCity : "",
+            invoice.user.addressCountry != null ? invoice.user.addressCountry : "FR"
+        );
 
-            @Override
-            public Date getIssueDate() {
-                return java.sql.Date.valueOf(invoice.issueDate);
-            }
+        if (invoice.user.siret != null) {
+            sender.addTaxID(invoice.user.siret);
+            sender.addVATID(invoice.user.siret);
+        }
 
-            @Override
-            public Date getDueDate() {
-                return java.sql.Date.valueOf(invoice.dueDate);
-            }
+        // Add contact information
+        if (invoice.user.email != null || invoice.user.phone != null) {
+            String contactName = invoice.user.getFullName();
+            String phone = invoice.user.phone != null ? invoice.user.phone : "";
+            String email = invoice.user.email != null ? invoice.user.email : "";
+            sender.setContact(new Contact(contactName, phone, email));
+        }
 
-            @Override
-            public String getCurrency() {
-                return invoice.currency;
-            }
+        // Add bank details if available
+        if (invoice.user.iban != null) {
+            String bic = invoice.user.bic != null ? invoice.user.bic : "";
+            sender.addBankDetails(new BankDetails(invoice.user.iban, bic));
+        }
 
-            @Override
-            public IZUGFeRDExportableItem[] getZUGFeRDExportableItems() {
-                return invoice.items.stream()
-                        .map(item -> (IZUGFeRDExportableItem) new IZUGFeRDExportableItem() {
-                            @Override
-                            public BigDecimal getPrice() {
-                                return item.unitPrice;
-                            }
+        // Create recipient (TradeParty)
+        TradeParty recipient = new TradeParty(
+            invoice.client.companyName,
+            invoice.client.addressStreet != null ? invoice.client.addressStreet : "",
+            invoice.client.addressPostalCode != null ? invoice.client.addressPostalCode : "",
+            invoice.client.addressCity != null ? invoice.client.addressCity : "",
+            invoice.client.addressCountry != null ? invoice.client.addressCountry : "FR"
+        );
 
-                            @Override
-                            public BigDecimal getQuantity() {
-                                return item.quantity;
-                            }
+        if (invoice.client.siret != null) {
+            recipient.addTaxID(invoice.client.siret);
+        }
 
-                            @Override
-                            public String getProduct() {
-                                return new Product(item.description, "", "HUR", item.taxRate);
-                            }
-                        })
-                        .toArray(IZUGFeRDExportableItem[]::new);
-            }
+        // Create Mustang Invoice
+        org.mustangproject.Invoice mustangInvoice = new org.mustangproject.Invoice()
+            .setDueDate(java.sql.Date.valueOf(invoice.dueDate))
+            .setIssueDate(java.sql.Date.valueOf(invoice.issueDate))
+            .setDeliveryDate(java.sql.Date.valueOf(invoice.issueDate)) // Use issue date as delivery date if not available
+            .setSender(sender)
+            .setRecipient(recipient)
+            .setNumber(invoice.invoiceNumber);
 
-            @Override
-            public String getOwnOrganisationName() {
-                return invoice.user.companyName != null ? invoice.user.companyName : invoice.user.getFullName();
-            }
+        // Add items
+        for (InvoiceItem item : invoice.items) {
+            // Product code "C62" = "Unit" (UN/ECE Recommendation 20)
+            Product product = new Product(
+                item.description,
+                "", // description additionnelle
+                "C62", // unit code (C62 = Unit)
+                item.taxRate
+            );
+            
+            Item mustangItem = new Item(
+                product,
+                item.unitPrice,
+                item.quantity
+            );
+            
+            mustangInvoice.addItem(mustangItem);
+        }
 
-            @Override
-            public String getOwnOrganisationFullPlaintextInfo() {
-                StringBuilder info = new StringBuilder();
-                info.append(getOwnOrganisationName()).append("\n");
-                if (invoice.user.addressStreet != null) {
-                    info.append(invoice.user.addressStreet).append("\n");
-                }
-                if (invoice.user.addressPostalCode != null && invoice.user.addressCity != null) {
-                    info.append(invoice.user.addressPostalCode).append(" ").append(invoice.user.addressCity).append("\n");
-                }
-                if (invoice.user.siret != null) {
-                    info.append("SIRET: ").append(invoice.user.siret).append("\n");
-                }
-                if (invoice.user.email != null) {
-                    info.append("Email: ").append(invoice.user.email);
-                }
-                return info.toString();
-            }
+        // Payment terms can be set via setPaymentTerms(IZUGFeRDPaymentTerms) if needed
+        // For now, we skip it as it requires creating an IZUGFeRDPaymentTerms object
 
-            @Override
-            public String getRecipientName() {
-                return invoice.client.companyName;
-            }
-
-            @Override
-            public String getRecipient() {
-                StringBuilder info = new StringBuilder();
-                info.append(invoice.client.companyName).append("\n");
-                if (invoice.client.addressStreet != null) {
-                    info.append(invoice.client.addressStreet).append("\n");
-                }
-                if (invoice.client.addressPostalCode != null && invoice.client.addressCity != null) {
-                    info.append(invoice.client.addressPostalCode).append(" ").append(invoice.client.addressCity).append("\n");
-                }
-                if (invoice.client.siret != null) {
-                    info.append("SIRET: ").append(invoice.client.siret);
-                }
-                return info.toString();
-            }
-
-            @Override
-            public String getOwnTaxID() {
-                return invoice.user.siret;
-            }
-
-            @Override
-            public String getOwnVATID() {
-                return invoice.user.siret; // In France, SIRET can be used
-            }
-
-            @Override
-            public IZUGFeRDAllowanceCharge[] getZUGFeRDAllowanceCharges() {
-                return new IZUGFeRDAllowanceCharge[0];
-            }
-
-            @Override
-            public IZUGFeRDPaymentTerms getPaymentTerms() {
-                if (invoice.paymentTerms != null && !invoice.paymentTerms.isEmpty()) {
-                    return new IZUGFeRDPaymentTerms(invoice.paymentTerms, getDueDate());
-                }
-                return null;
-            }
-
-            @Override
-            public String getReferenceNumber() {
-                return invoice.invoiceNumber;
-            }
-        };
+        return mustangInvoice;
     }
 }
