@@ -11,13 +11,14 @@
       </div>
       <form class="mt-8 space-y-6" @submit.prevent="handleVerifyOtp">
         <div>
-          <label for="email" class="sr-only">Email</label>
+          <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
           <input
             id="email"
             v-model="form.email"
             type="email"
             required
-            class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+            readonly
+            class="appearance-none relative block w-full px-3 py-2 border border-gray-300 bg-gray-50 text-gray-700 rounded-md focus:outline-none sm:text-sm"
             placeholder="Adresse email"
           />
         </div>
@@ -53,11 +54,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
+const route = useRoute()
 const authStore = useAuthStore()
 
 const form = ref({
@@ -67,6 +69,13 @@ const form = ref({
 
 const loading = ref(false)
 const error = ref('')
+
+onMounted(() => {
+  // Pré-remplir l'email depuis les paramètres de la route
+  if (route.query.email) {
+    form.value.email = route.query.email as string
+  }
+})
 
 const handleVerifyOtp = async () => {
   loading.value = true
