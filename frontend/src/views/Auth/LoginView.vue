@@ -21,7 +21,7 @@ const handleLogin = async () => {
   error.value = ''
 
   try {
-    await authStore.login({ email: value.value, password: password.value })
+    await authStore.login({ email: email.value, password: password.value })
     router.push({ name: 'verify-otp', query: { email: email.value } })
   } catch (e: any) {
     error.value = e.response?.data?.message || 'Erreur lors de la connexion'
