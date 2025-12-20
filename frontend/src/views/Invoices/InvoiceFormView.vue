@@ -1,22 +1,25 @@
 <template>
-  <div class="space-y-6">
+  <div class="space-y-8">
     <div>
-      <h1 class="text-2xl font-bold text-gray-900">
+      <h1 class="text-3xl font-bold text-gray-900 tracking-tight">
         {{ isEdit ? 'Modifier la facture' : 'Nouvelle facture' }}
       </h1>
+      <p class="mt-2 text-sm text-gray-600 font-medium">
+        {{ isEdit ? 'Mettez à jour les informations de la facture' : 'Créez une nouvelle facture' }}
+      </p>
     </div>
 
-    <form @submit.prevent="handleSubmit" class="space-y-6 bg-white shadow sm:rounded-lg p-6">
+    <form @submit.prevent="handleSubmit" class="space-y-8 bg-white/80 backdrop-blur-sm shadow-lg rounded-2xl p-8 border border-gray-100">
       <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <div>
-          <label for="clientId" class="block text-sm font-medium text-gray-700">
+          <label for="clientId" class="block text-sm font-semibold text-gray-700 mb-2">
             Client *
           </label>
           <select
             id="clientId"
             v-model="form.clientId"
             required
-            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-900"
           >
             <option value="">Sélectionnez un client</option>
             <option v-for="client in clients" :key="client.id" :value="client.id">
@@ -26,14 +29,14 @@
         </div>
 
         <div>
-          <label for="status" class="block text-sm font-medium text-gray-700">
+          <label for="status" class="block text-sm font-semibold text-gray-700 mb-2">
             Statut *
           </label>
           <select
             id="status"
             v-model="form.status"
             required
-            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-900"
           >
             <option value="DRAFT">Brouillon</option>
             <option value="SENT">Envoyée</option>
@@ -44,7 +47,7 @@
         </div>
 
         <div>
-          <label for="issueDate" class="block text-sm font-medium text-gray-700">
+          <label for="issueDate" class="block text-sm font-semibold text-gray-700 mb-2">
             Date d'émission *
           </label>
           <input
@@ -52,12 +55,12 @@
             v-model="form.issueDate"
             type="date"
             required
-            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-900"
           />
         </div>
 
         <div>
-          <label for="dueDate" class="block text-sm font-medium text-gray-700">
+          <label for="dueDate" class="block text-sm font-semibold text-gray-700 mb-2">
             Date d'échéance *
           </label>
           <input
@@ -65,26 +68,26 @@
             v-model="form.dueDate"
             type="date"
             required
-            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-900"
           />
         </div>
 
         <div class="col-span-2">
-          <label class="block text-sm font-medium text-gray-700 mb-2">
+          <label class="block text-sm font-semibold text-gray-700 mb-3">
             Lignes de facture
           </label>
-          <div class="space-y-2">
+          <div class="space-y-3">
             <div
               v-for="(item, index) in form.items"
               :key="index"
-              class="flex gap-2 items-start"
+              class="flex gap-3 items-start p-4 bg-gray-50 rounded-xl border border-gray-200"
             >
               <input
                 v-model="item.description"
                 type="text"
-                placeholder="Description"
+                placeholder="Description du service ou produit"
                 required
-                class="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                class="flex-1 px-4 py-2.5 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400"
               />
               <input
                 v-model.number="item.quantity"
@@ -92,62 +95,87 @@
                 step="0.01"
                 placeholder="Qté"
                 required
-                class="w-20 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                class="w-20 px-3 py-2.5 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400"
               />
               <input
                 v-model.number="item.unitPrice"
                 type="number"
                 step="0.01"
-                placeholder="Prix unitaire"
+                placeholder="Prix (€)"
                 required
-                class="w-32 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                class="w-28 px-3 py-2.5 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400"
+              />
+              <input
+                v-model.number="item.taxRate"
+                type="number"
+                step="0.01"
+                placeholder="TVA %"
+                required
+                class="w-24 px-3 py-2.5 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400"
               />
               <button
                 type="button"
                 @click="removeItem(index)"
-                class="px-3 py-2 text-red-600 hover:text-red-800"
+                class="p-2.5 text-red-600 hover:text-white hover:bg-red-600 rounded-lg transition-all duration-200"
+                :disabled="form.items.length === 1"
+                :class="{ 'opacity-50 cursor-not-allowed': form.items.length === 1 }"
               >
-                ✕
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
             </div>
           </div>
           <button
             type="button"
             @click="addItem"
-            class="mt-2 text-sm text-indigo-600 hover:text-indigo-800"
+            class="mt-4 inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-primary-700 bg-primary-50 hover:bg-primary-100 rounded-lg transition-all duration-200"
           >
-            + Ajouter une ligne
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Ajouter une ligne
           </button>
         </div>
 
         <div class="col-span-2">
-          <label for="notes" class="block text-sm font-medium text-gray-700">
+          <label for="notes" class="block text-sm font-semibold text-gray-700 mb-2">
             Notes
           </label>
           <textarea
             id="notes"
             v-model="form.notes"
-            rows="3"
-            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            rows="4"
+            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400 resize-none"
+            placeholder="Ajouter des notes ou conditions de paiement..."
           ></textarea>
         </div>
       </div>
 
-      <div v-if="error" class="text-red-600 text-sm">
-        {{ error }}
+      <div v-if="error" class="rounded-2xl bg-red-50 p-4 border border-red-100">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm font-semibold text-red-800">{{ error }}</p>
+          </div>
+        </div>
       </div>
 
-      <div class="flex justify-end space-x-3">
+      <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
         <router-link
           to="/invoices"
-          class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          class="inline-flex items-center px-6 py-3 border border-gray-200 shadow-sm text-sm font-semibold rounded-xl text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200"
         >
           Annuler
         </router-link>
         <button
           type="submit"
           :disabled="loading"
-          class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+          class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
         >
           {{ loading ? 'Enregistrement...' : 'Enregistrer' }}
         </button>
@@ -176,7 +204,7 @@ const form = ref({
   issueDate: new Date().toISOString().split('T')[0],
   dueDate: '',
   items: [
-    { description: '', quantity: 1, unitPrice: 0 }
+    { description: '', quantity: 1, unitPrice: 0, taxRate: 20 }
   ],
   notes: ''
 })
@@ -185,7 +213,7 @@ const loading = ref(false)
 const error = ref('')
 
 const addItem = () => {
-  form.value.items.push({ description: '', quantity: 1, unitPrice: 0 })
+  form.value.items.push({ description: '', quantity: 1, unitPrice: 0, taxRate: 20 })
 }
 
 const removeItem = (index: number) => {
@@ -206,7 +234,7 @@ onMounted(async () => {
         status: invoice.status,
         issueDate: invoice.issueDate,
         dueDate: invoice.dueDate,
-        items: invoice.items || [{ description: '', quantity: 1, unitPrice: 0 }],
+        items: invoice.items || [{ description: '', quantity: 1, unitPrice: 0, taxRate: 20 }],
         notes: invoice.notes || ''
       }
     }
