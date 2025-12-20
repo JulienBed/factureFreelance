@@ -159,13 +159,13 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useInvoicesStore } from '@/stores/invoices'
-import { useClientsStore } from '@/stores/clients'
+import { useInvoiceStore } from '@/stores/invoices'
+import { useClientStore } from '@/stores/clients'
 
 const route = useRoute()
 const router = useRouter()
-const invoicesStore = useInvoicesStore()
-const clientsStore = useClientsStore()
+const invoicesStore = useInvoiceStore()
+const clientsStore = useClientStore()
 
 const isEdit = computed(() => !!route.params.id)
 const clients = ref<any[]>([])
