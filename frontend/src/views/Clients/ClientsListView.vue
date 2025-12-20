@@ -2,9 +2,9 @@
   <div class="space-y-8">
     <div class="sm:flex sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Clients</h1>
+        <h1 class="text-3xl font-bold text-gray-900 tracking-tight">{{ t('clients.list.title') }}</h1>
         <p class="mt-2 text-sm text-gray-600 font-medium">
-          Gérez vos clients
+          {{ t('clients.list.subtitle') }}
         </p>
       </div>
       <div class="mt-4 sm:mt-0">
@@ -15,7 +15,7 @@
           <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
           </svg>
-          Nouveau client
+          {{ t('clients.list.newClient') }}
         </router-link>
       </div>
     </div>
@@ -55,8 +55,8 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
           </svg>
         </div>
-        <p class="text-sm font-medium text-gray-600">Aucun client trouvé</p>
-        <p class="mt-1 text-xs text-gray-500">Commencez par créer votre premier client</p>
+        <p class="text-sm font-medium text-gray-600">{{ t('clients.list.empty.title') }}</p>
+        <p class="mt-1 text-xs text-gray-500">{{ t('clients.list.empty.subtitle') }}</p>
       </div>
     </div>
   </div>
@@ -65,9 +65,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useClientStore } from '@/stores/clients'
+import { useI18n } from 'vue-i18n'
 
 const clientsStore = useClientStore()
 const clients = ref<any[]>([])
+const { t } = useI18n()
 
 onMounted(async () => {
   await clientsStore.fetchClients()
