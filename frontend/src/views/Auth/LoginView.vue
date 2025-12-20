@@ -2,9 +2,11 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useI18n } from 'vue-i18n'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const { t } = useI18n()
 
 const email = ref('')
 const password = ref('')
@@ -13,7 +15,7 @@ const loading = ref(false)
 
 const handleLogin = async () => {
   if (!email.value || !password.value) {
-    error.value = 'Veuillez remplir tous les champs'
+    error.value = t('auth.login.errors.fillFields')
     return
   }
 
@@ -26,11 +28,11 @@ const handleLogin = async () => {
   } catch (e: any) {
     // Gestion spécifique des erreurs 401 (identifiants incorrects)
     if (e.response?.status === 401) {
-      error.value = 'Email ou mot de passe incorrect'
+      error.value = t('auth.login.errors.invalidCredentials')
     } else if (e.response?.status === 404) {
-      error.value = 'Utilisateur non trouvé. Veuillez créer un compte.'
+      error.value = t('auth.login.errors.userNotFound')
     } else {
-      error.value = e.response?.data?.message || 'Erreur lors de la connexion. Veuillez réessayer.'
+      error.value = e.response?.data?.message || t('auth.login.errors.generic')
     }
   } finally {
     loading.value = false
@@ -50,10 +52,10 @@ const handleLogin = async () => {
             </svg>
           </div>
           <h2 class="text-3xl font-bold text-gray-900 tracking-tight">
-            Facture Freelance
+            {{ t('auth.login.title') }}
           </h2>
           <p class="mt-2 text-sm text-gray-600 font-medium">
-            Connectez-vous à votre compte
+            {{ t('auth.login.subtitle') }}
           </p>
         </div>
 
@@ -73,25 +75,25 @@ const handleLogin = async () => {
 
           <div class="space-y-4">
             <div>
-              <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">Email</label>
+              <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">{{ t('common.email') }}</label>
               <input
                 id="email"
                 v-model="email"
                 type="email"
                 required
                 class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400"
-                placeholder="votre@email.com"
+                :placeholder="t('auth.login.emailPlaceholder')"
               />
             </div>
             <div>
-              <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">Mot de passe</label>
+              <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">{{ t('common.password') }}</label>
               <input
                 id="password"
                 v-model="password"
                 type="password"
                 required
                 class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400"
-                placeholder="••••••••"
+                :placeholder="t('auth.login.passwordPlaceholder')"
               />
             </div>
           </div>
@@ -102,13 +104,13 @@ const handleLogin = async () => {
               :disabled="loading"
               class="w-full bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold py-3.5 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
-              {{ loading ? 'Connexion...' : 'Se connecter' }}
+              {{ loading ? t('auth.login.connecting') : t('auth.login.button') }}
             </button>
           </div>
 
           <div class="text-center pt-2">
             <RouterLink to="/register" class="text-sm font-semibold text-primary-600 hover:text-primary-700 transition-colors duration-200">
-              Pas encore de compte ? <span class="underline">S'inscrire</span>
+              {{ t('auth.login.noAccount') }} <span class="underline">{{ t('auth.login.signUp') }}</span>
             </RouterLink>
           </div>
         </form>

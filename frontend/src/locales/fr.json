@@ -1,0 +1,138 @@
+{
+  "common": {
+    "appName": "Facture Freelance",
+    "save": "Enregistrer",
+    "saving": "Enregistrement...",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "create": "Créer",
+    "search": "Rechercher",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "required": "Champ requis",
+    "email": "Email",
+    "password": "Mot de passe",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "phone": "Téléphone",
+    "address": "Adresse",
+    "city": "Ville",
+    "postalCode": "Code postal",
+    "notes": "Notes"
+  },
+  "auth": {
+    "login": {
+      "title": "Facture Freelance",
+      "subtitle": "Connectez-vous à votre compte",
+      "button": "Se connecter",
+      "connecting": "Connexion...",
+      "noAccount": "Pas encore de compte ?",
+      "signUp": "S'inscrire",
+      "emailPlaceholder": "votre@email.com",
+      "passwordPlaceholder": "••••••••",
+      "errors": {
+        "fillFields": "Veuillez remplir tous les champs",
+        "invalidCredentials": "Email ou mot de passe incorrect",
+        "userNotFound": "Utilisateur non trouvé. Veuillez créer un compte.",
+        "generic": "Erreur lors de la connexion. Veuillez réessayer."
+      }
+    },
+    "register": {
+      "title": "Créer un compte",
+      "subtitle": "Rejoignez Facture Freelance",
+      "button": "Créer mon compte",
+      "creating": "Création...",
+      "hasAccount": "Déjà un compte ?",
+      "signIn": "Se connecter",
+      "firstNamePlaceholder": "Jean",
+      "lastNamePlaceholder": "Dupont"
+    },
+    "verifyOtp": {
+      "title": "Vérification",
+      "subtitle": "Entrez le code à 6 chiffres envoyé par email",
+      "button": "Vérifier",
+      "verifying": "Vérification...",
+      "otpPlaceholder": "123456",
+      "resend": "Renvoyer le code"
+    }
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "subtitle": "Vue d'ensemble de votre activité",
+    "stats": {
+      "totalClients": "Total Clients",
+      "monthlyInvoices": "Factures du mois",
+      "paidInvoices": "Factures payées",
+      "pendingInvoices": "Factures en attente"
+    },
+    "recentInvoices": "Factures récentes",
+    "viewAll": "Voir toutes les factures"
+  },
+  "clients": {
+    "list": {
+      "title": "Clients",
+      "subtitle": "Gérez vos clients",
+      "newClient": "Nouveau client",
+      "empty": {
+        "title": "Aucun client trouvé",
+        "subtitle": "Commencez par créer votre premier client"
+      }
+    },
+    "form": {
+      "titleNew": "Nouveau client",
+      "titleEdit": "Modifier le client",
+      "subtitleNew": "Créez un nouveau client",
+      "subtitleEdit": "Mettez à jour les informations du client",
+      "companyName": "Nom de l'entreprise",
+      "companyNamePlaceholder": "ACME Corporation",
+      "emailPlaceholder": "contact@acme.com",
+      "phonePlaceholder": "+33 6 12 34 56 78",
+      "addressPlaceholder": "123 Rue de la Paix",
+      "postalCodePlaceholder": "75000",
+      "cityPlaceholder": "Paris",
+      "siret": "SIRET",
+      "siretPlaceholder": "123 456 789 00012"
+    }
+  },
+  "invoices": {
+    "list": {
+      "title": "Factures",
+      "subtitle": "Gérez vos factures",
+      "newInvoice": "Nouvelle facture",
+      "empty": {
+        "title": "Aucune facture trouvée",
+        "subtitle": "Commencez par créer votre première facture"
+      }
+    },
+    "form": {
+      "titleNew": "Nouvelle facture",
+      "titleEdit": "Modifier la facture",
+      "subtitleNew": "Créez une nouvelle facture",
+      "subtitleEdit": "Mettez à jour les informations de la facture",
+      "client": "Client",
+      "selectClient": "Sélectionnez un client",
+      "status": "Statut",
+      "issueDate": "Date d'émission",
+      "dueDate": "Date d'échéance",
+      "items": "Lignes de facture",
+      "addItem": "Ajouter une ligne",
+      "itemDescription": "Description du service ou produit",
+      "quantity": "Qté",
+      "unitPrice": "Prix (€)",
+      "taxRate": "TVA %",
+      "notesPlaceholder": "Ajouter des notes ou conditions de paiement..."
+    },
+    "status": {
+      "DRAFT": "Brouillon",
+      "SENT": "Envoyée",
+      "PAID": "Payée",
+      "OVERDUE": "En retard",
+      "CANCELLED": "Annulée"
+    }
+  },
+  "errors": {
+    "saveFailed": "Erreur lors de l'enregistrement"
+  }
+}
