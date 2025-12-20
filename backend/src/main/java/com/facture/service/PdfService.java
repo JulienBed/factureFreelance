@@ -58,20 +58,25 @@ public class PdfService {
 
         PDPageContentStream contentStream = new PDPageContentStream(document, page);
 
+        // Load fonts once - PDFBox 3.x: use PDType1Font static methods
+        // In PDFBox 3.x, fonts are accessed via PDType1Font static fields
+        PDType1Font helveticaBold = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
+        PDType1Font helvetica = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
+
         float margin = 50;
         float yPosition = page.getMediaBox().getHeight() - margin;
         float fontSize = 12;
 
         // Header - Company info
         contentStream.beginText();
-        contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 18);
+        contentStream.setFont(helveticaBold, 18);
         contentStream.newLineAtOffset(margin, yPosition);
         contentStream.showText(invoice.user.companyName != null ? invoice.user.companyName : invoice.user.getFullName());
         contentStream.endText();
 
         yPosition -= 20;
         contentStream.beginText();
-        contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 10);
+        contentStream.setFont(helvetica, 10);
         contentStream.newLineAtOffset(margin, yPosition);
         if (invoice.user.addressStreet != null) {
             contentStream.showText(invoice.user.addressStreet);
@@ -97,14 +102,14 @@ public class PdfService {
         // Invoice title and number
         yPosition -= 40;
         contentStream.beginText();
-        contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 20);
+        contentStream.setFont(helveticaBold, 20);
         contentStream.newLineAtOffset(margin, yPosition);
         contentStream.showText("FACTURE");
         contentStream.endText();
 
         yPosition -= 25;
         contentStream.beginText();
-        contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), fontSize);
+        contentStream.setFont(helveticaBold, fontSize);
         contentStream.newLineAtOffset(margin, yPosition);
         contentStream.showText("N° " + invoice.invoiceNumber);
         contentStream.endText();
@@ -112,14 +117,14 @@ public class PdfService {
         // Client info
         yPosition -= 30;
         contentStream.beginText();
-        contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), fontSize);
+        contentStream.setFont(helveticaBold, fontSize);
         contentStream.newLineAtOffset(margin, yPosition);
         contentStream.showText("Client:");
         contentStream.endText();
 
         yPosition -= 15;
         contentStream.beginText();
-        contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), fontSize);
+        contentStream.setFont(helvetica, fontSize);
         contentStream.newLineAtOffset(margin, yPosition);
         contentStream.showText(invoice.client.companyName);
         contentStream.endText();
@@ -143,7 +148,7 @@ public class PdfService {
         // Dates
         yPosition -= 30;
         contentStream.beginText();
-        contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), fontSize);
+        contentStream.setFont(helvetica, fontSize);
         contentStream.newLineAtOffset(margin, yPosition);
         contentStream.showText("Date d'emission: " + invoice.issueDate.format(DATE_FORMATTER));
         contentStream.endText();
@@ -159,7 +164,7 @@ public class PdfService {
         float tableMargin = margin;
 
         contentStream.beginText();
-        contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 10);
+        contentStream.setFont(helveticaBold, 10);
         contentStream.newLineAtOffset(tableMargin, yPosition);
         contentStream.showText("Description");
         contentStream.endText();
@@ -192,7 +197,7 @@ public class PdfService {
 
         // Items
         yPosition -= 20;
-        contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 10);
+        contentStream.setFont(helvetica, 10);
 
         for (InvoiceItem item : invoice.items) {
             contentStream.beginText();
@@ -230,7 +235,7 @@ public class PdfService {
         float totalsX = page.getMediaBox().getWidth() - margin - 150;
 
         contentStream.beginText();
-        contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 10);
+        contentStream.setFont(helvetica, 10);
         contentStream.newLineAtOffset(totalsX, yPosition);
         contentStream.showText("Total HT:");
         contentStream.endText();
@@ -253,7 +258,7 @@ public class PdfService {
 
         yPosition -= 15;
         contentStream.beginText();
-        contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 12);
+        contentStream.setFont(helveticaBold, 12);
         contentStream.newLineAtOffset(totalsX, yPosition);
         contentStream.showText("Total TTC:");
         contentStream.endText();
@@ -267,14 +272,14 @@ public class PdfService {
         if (invoice.user.iban != null) {
             yPosition -= 40;
             contentStream.beginText();
-            contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 10);
+            contentStream.setFont(helveticaBold, 10);
             contentStream.newLineAtOffset(margin, yPosition);
             contentStream.showText("Informations de paiement:");
             contentStream.endText();
 
             yPosition -= 15;
             contentStream.beginText();
-            contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 9);
+            contentStream.setFont(helvetica, 9);
             contentStream.newLineAtOffset(margin, yPosition);
             contentStream.showText("IBAN: " + invoice.user.iban);
             contentStream.endText();
@@ -292,14 +297,14 @@ public class PdfService {
         if (invoice.notes != null && !invoice.notes.isEmpty()) {
             yPosition -= 30;
             contentStream.beginText();
-            contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 10);
+            contentStream.setFont(helveticaBold, 10);
             contentStream.newLineAtOffset(margin, yPosition);
             contentStream.showText("Notes:");
             contentStream.endText();
 
             yPosition -= 15;
             contentStream.beginText();
-            contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 9);
+            contentStream.setFont(helvetica, 9);
             contentStream.newLineAtOffset(margin, yPosition);
             contentStream.showText(invoice.notes);
             contentStream.endText();
