@@ -15,9 +15,17 @@ public class OtpUtil {
     @ConfigProperty(name = "otp.length", defaultValue = "6")
     int otpLength;
 
+    @ConfigProperty(name = "otp.dev.enabled", defaultValue = "false")
+    boolean devModeEnabled;
+
     private final SecureRandom random = new SecureRandom();
 
     public String generateOtp() {
+        // En mode dev, retourner toujours 123456 pour faciliter les tests
+        if (devModeEnabled) {
+            return "123456";
+        }
+
         StringBuilder otp = new StringBuilder();
         for (int i = 0; i < otpLength; i++) {
             otp.append(random.nextInt(10));
