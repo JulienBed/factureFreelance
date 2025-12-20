@@ -2,9 +2,9 @@
   <div class="space-y-8">
     <div class="sm:flex sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Factures</h1>
+        <h1 class="text-3xl font-bold text-gray-900 tracking-tight">{{ t('invoices.list.title') }}</h1>
         <p class="mt-2 text-sm text-gray-600 font-medium">
-          Gérez vos factures
+          {{ t('invoices.list.subtitle') }}
         </p>
       </div>
       <div class="mt-4 sm:mt-0">
@@ -15,7 +15,7 @@
           <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
           </svg>
-          Nouvelle facture
+          {{ t('invoices.list.newInvoice') }}
         </router-link>
       </div>
     </div>
@@ -68,8 +68,8 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
         </div>
-        <p class="text-sm font-medium text-gray-600">Aucune facture trouvée</p>
-        <p class="mt-1 text-xs text-gray-500">Commencez par créer votre première facture</p>
+        <p class="text-sm font-medium text-gray-600">{{ t('invoices.list.empty.title') }}</p>
+        <p class="mt-1 text-xs text-gray-500">{{ t('invoices.list.empty.subtitle') }}</p>
       </div>
     </div>
   </div>
@@ -78,9 +78,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useInvoiceStore } from '@/stores/invoices'
+import { useI18n } from 'vue-i18n'
 
 const invoicesStore = useInvoiceStore()
 const invoices = ref<any[]>([])
+const { t } = useI18n()
 
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat('fr-FR', {
@@ -90,14 +92,7 @@ const formatCurrency = (amount: number) => {
 }
 
 const getStatusLabel = (status: string) => {
-  const labels: Record<string, string> = {
-    DRAFT: 'Brouillon',
-    SENT: 'Envoyée',
-    PAID: 'Payée',
-    OVERDUE: 'En retard',
-    CANCELLED: 'Annulée'
-  }
-  return labels[status] || status
+  return t(`invoices.status.${status}`, status)
 }
 
 const getStatusColor = (status: string) => {

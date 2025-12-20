@@ -2,10 +2,10 @@
   <div class="space-y-8">
     <div>
       <h1 class="text-3xl font-bold text-gray-900 tracking-tight">
-        {{ isEdit ? 'Modifier la facture' : 'Nouvelle facture' }}
+        {{ isEdit ? t('invoices.form.titleEdit') : t('invoices.form.titleNew') }}
       </h1>
       <p class="mt-2 text-sm text-gray-600 font-medium">
-        {{ isEdit ? 'Mettez à jour les informations de la facture' : 'Créez une nouvelle facture' }}
+        {{ isEdit ? t('invoices.form.subtitleEdit') : t('invoices.form.subtitleNew') }}
       </p>
     </div>
 
@@ -13,7 +13,7 @@
       <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <div>
           <label for="clientId" class="block text-sm font-semibold text-gray-700 mb-2">
-            Client *
+            {{ t('invoices.form.client') }} *
           </label>
           <select
             id="clientId"
@@ -21,7 +21,7 @@
             required
             class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-900"
           >
-            <option value="">Sélectionnez un client</option>
+            <option value="">{{ t('invoices.form.selectClient') }}</option>
             <option v-for="client in clients" :key="client.id" :value="client.id">
               {{ client.companyName }}
             </option>
@@ -30,7 +30,7 @@
 
         <div>
           <label for="status" class="block text-sm font-semibold text-gray-700 mb-2">
-            Statut *
+            {{ t('invoices.form.status') }} *
           </label>
           <select
             id="status"
@@ -38,17 +38,17 @@
             required
             class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-900"
           >
-            <option value="DRAFT">Brouillon</option>
-            <option value="SENT">Envoyée</option>
-            <option value="PAID">Payée</option>
-            <option value="OVERDUE">En retard</option>
-            <option value="CANCELLED">Annulée</option>
+            <option value="DRAFT">{{ t('invoices.status.DRAFT') }}</option>
+            <option value="SENT">{{ t('invoices.status.SENT') }}</option>
+            <option value="PAID">{{ t('invoices.status.PAID') }}</option>
+            <option value="OVERDUE">{{ t('invoices.status.OVERDUE') }}</option>
+            <option value="CANCELLED">{{ t('invoices.status.CANCELLED') }}</option>
           </select>
         </div>
 
         <div>
           <label for="issueDate" class="block text-sm font-semibold text-gray-700 mb-2">
-            Date d'émission *
+            {{ t('invoices.form.issueDate') }} *
           </label>
           <input
             id="issueDate"
@@ -61,7 +61,7 @@
 
         <div>
           <label for="dueDate" class="block text-sm font-semibold text-gray-700 mb-2">
-            Date d'échéance *
+            {{ t('invoices.form.dueDate') }} *
           </label>
           <input
             id="dueDate"
@@ -74,7 +74,7 @@
 
         <div class="col-span-2">
           <label class="block text-sm font-semibold text-gray-700 mb-3">
-            Lignes de facture
+            {{ t('invoices.form.items') }}
           </label>
           <div class="space-y-3">
             <div
@@ -85,7 +85,7 @@
               <input
                 v-model="item.description"
                 type="text"
-                placeholder="Description du service ou produit"
+                :placeholder="t('invoices.form.itemDescription')"
                 required
                 class="flex-1 px-4 py-2.5 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400"
               />
@@ -93,7 +93,7 @@
                 v-model.number="item.quantity"
                 type="number"
                 step="0.01"
-                placeholder="Qté"
+                :placeholder="t('invoices.form.quantity')"
                 required
                 class="w-20 px-3 py-2.5 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400"
               />
@@ -101,7 +101,7 @@
                 v-model.number="item.unitPrice"
                 type="number"
                 step="0.01"
-                placeholder="Prix (€)"
+                :placeholder="t('invoices.form.unitPrice')"
                 required
                 class="w-28 px-3 py-2.5 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400"
               />
@@ -109,7 +109,7 @@
                 v-model.number="item.taxRate"
                 type="number"
                 step="0.01"
-                placeholder="TVA %"
+                :placeholder="t('invoices.form.taxRate')"
                 required
                 class="w-24 px-3 py-2.5 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400"
               />
@@ -134,20 +134,20 @@
             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
-            Ajouter une ligne
+            {{ t('invoices.form.addItem') }}
           </button>
         </div>
 
         <div class="col-span-2">
           <label for="notes" class="block text-sm font-semibold text-gray-700 mb-2">
-            Notes
+            {{ t('common.notes') }}
           </label>
           <textarea
             id="notes"
             v-model="form.notes"
             rows="4"
             class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400 resize-none"
-            placeholder="Ajouter des notes ou conditions de paiement..."
+            :placeholder="t('invoices.form.notesPlaceholder')"
           ></textarea>
         </div>
       </div>
@@ -170,14 +170,14 @@
           to="/invoices"
           class="inline-flex items-center px-6 py-3 border border-gray-200 shadow-sm text-sm font-semibold rounded-xl text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200"
         >
-          Annuler
+          {{ t('common.cancel') }}
         </router-link>
         <button
           type="submit"
           :disabled="loading"
           class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
         >
-          {{ loading ? 'Enregistrement...' : 'Enregistrer' }}
+          {{ loading ? t('common.saving') : t('common.save') }}
         </button>
       </div>
     </form>
@@ -189,11 +189,13 @@ import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useInvoiceStore } from '@/stores/invoices'
 import { useClientStore } from '@/stores/clients'
+import { useI18n } from 'vue-i18n'
 
 const route = useRoute()
 const router = useRouter()
 const invoicesStore = useInvoiceStore()
 const clientsStore = useClientStore()
+const { t } = useI18n()
 
 const isEdit = computed(() => !!route.params.id)
 const clients = ref<any[]>([])
@@ -254,7 +256,7 @@ const handleSubmit = async () => {
     }
     router.push({ name: 'invoices' })
   } catch (err: any) {
-    error.value = err.response?.data?.message || 'Erreur lors de l\'enregistrement'
+    error.value = err.response?.data?.message || t('errors.saveFailed')
   } finally {
     loading.value = false
   }

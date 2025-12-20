@@ -2,10 +2,10 @@
   <div class="space-y-8">
     <div>
       <h1 class="text-3xl font-bold text-gray-900 tracking-tight">
-        {{ isEdit ? 'Modifier le client' : 'Nouveau client' }}
+        {{ isEdit ? t('clients.form.titleEdit') : t('clients.form.titleNew') }}
       </h1>
       <p class="mt-2 text-sm text-gray-600 font-medium">
-        {{ isEdit ? 'Mettez à jour les informations du client' : 'Créez un nouveau client' }}
+        {{ isEdit ? t('clients.form.subtitleEdit') : t('clients.form.subtitleNew') }}
       </p>
     </div>
 
@@ -13,7 +13,7 @@
       <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <div class="col-span-2">
           <label for="companyName" class="block text-sm font-semibold text-gray-700 mb-2">
-            Nom de l'entreprise *
+            {{ t('clients.form.companyName') }} *
           </label>
           <input
             id="companyName"
@@ -21,13 +21,13 @@
             type="text"
             required
             class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400"
-            placeholder="ACME Corporation"
+            :placeholder="t('clients.form.companyNamePlaceholder')"
           />
         </div>
 
         <div>
           <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
-            Email *
+            {{ t('common.email') }} *
           </label>
           <input
             id="email"
@@ -35,72 +35,72 @@
             type="email"
             required
             class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400"
-            placeholder="contact@acme.com"
+            :placeholder="t('clients.form.emailPlaceholder')"
           />
         </div>
 
         <div>
           <label for="phone" class="block text-sm font-semibold text-gray-700 mb-2">
-            Téléphone
+            {{ t('common.phone') }}
           </label>
           <input
             id="phone"
             v-model="form.phone"
             type="tel"
             class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400"
-            placeholder="+33 6 12 34 56 78"
+            :placeholder="t('clients.form.phonePlaceholder')"
           />
         </div>
 
         <div class="col-span-2">
           <label for="addressStreet" class="block text-sm font-semibold text-gray-700 mb-2">
-            Adresse
+            {{ t('common.address') }}
           </label>
           <input
             id="addressStreet"
             v-model="form.addressStreet"
             type="text"
             class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400"
-            placeholder="123 Rue de la Paix"
+            :placeholder="t('clients.form.addressPlaceholder')"
           />
         </div>
 
         <div>
           <label for="addressPostalCode" class="block text-sm font-semibold text-gray-700 mb-2">
-            Code postal
+            {{ t('common.postalCode') }}
           </label>
           <input
             id="addressPostalCode"
             v-model="form.addressPostalCode"
             type="text"
             class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400"
-            placeholder="75000"
+            :placeholder="t('clients.form.postalCodePlaceholder')"
           />
         </div>
 
         <div>
           <label for="addressCity" class="block text-sm font-semibold text-gray-700 mb-2">
-            Ville
+            {{ t('common.city') }}
           </label>
           <input
             id="addressCity"
             v-model="form.addressCity"
             type="text"
             class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400"
-            placeholder="Paris"
+            :placeholder="t('clients.form.cityPlaceholder')"
           />
         </div>
 
         <div>
           <label for="siret" class="block text-sm font-semibold text-gray-700 mb-2">
-            SIRET
+            {{ t('clients.form.siret') }}
           </label>
           <input
             id="siret"
             v-model="form.siret"
             type="text"
             class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400"
-            placeholder="123 456 789 00012"
+            :placeholder="t('clients.form.siretPlaceholder')"
           />
         </div>
       </div>
@@ -123,14 +123,14 @@
           to="/clients"
           class="inline-flex items-center px-6 py-3 border border-gray-200 shadow-sm text-sm font-semibold rounded-xl text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200"
         >
-          Annuler
+          {{ t('common.cancel') }}
         </router-link>
         <button
           type="submit"
           :disabled="loading"
           class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
         >
-          {{ loading ? 'Enregistrement...' : 'Enregistrer' }}
+          {{ loading ? t('common.saving') : t('common.save') }}
         </button>
       </div>
     </form>
@@ -184,7 +184,7 @@ const handleSubmit = async () => {
     }
     router.push({ name: 'clients' })
   } catch (err: any) {
-    error.value = err.response?.data?.message || 'Erreur lors de l\'enregistrement'
+    error.value = err.response?.data?.message || t('errors.saveFailed')
   } finally {
     loading.value = false
   }
