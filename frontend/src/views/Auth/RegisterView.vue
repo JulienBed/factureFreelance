@@ -10,12 +10,12 @@
             </svg>
           </div>
           <h2 class="text-3xl font-bold text-gray-900 tracking-tight">
-            Créer un compte
+            {{ t('auth.register.title') }}
           </h2>
           <p class="mt-2 text-sm text-gray-600 font-medium">
-            Ou
+            {{ t('auth.register.hasAccount') }}
             <router-link to="/login" class="font-semibold text-primary-600 hover:text-primary-700 transition-colors duration-200">
-              connectez-vous à votre compte existant
+              {{ t('auth.register.signIn') }}
             </router-link>
           </p>
         </div>
@@ -36,50 +36,50 @@
 
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label for="firstName" class="block text-sm font-semibold text-gray-700 mb-2">Prénom</label>
+              <label for="firstName" class="block text-sm font-semibold text-gray-700 mb-2">{{ t('common.firstName') }}</label>
               <input
                 id="firstName"
                 v-model="form.firstName"
                 type="text"
                 required
                 class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400"
-                placeholder="Prénom"
+                :placeholder="t('auth.register.firstNamePlaceholder')"
               />
             </div>
             <div>
-              <label for="lastName" class="block text-sm font-semibold text-gray-700 mb-2">Nom</label>
+              <label for="lastName" class="block text-sm font-semibold text-gray-700 mb-2">{{ t('common.lastName') }}</label>
               <input
                 id="lastName"
                 v-model="form.lastName"
                 type="text"
                 required
                 class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400"
-                placeholder="Nom"
+                :placeholder="t('auth.register.lastNamePlaceholder')"
               />
             </div>
           </div>
 
           <div>
-            <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">Email</label>
+            <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">{{ t('common.email') }}</label>
             <input
               id="email"
               v-model="form.email"
               type="email"
               required
               class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400"
-              placeholder="votre@email.com"
+              :placeholder="t('auth.login.emailPlaceholder')"
             />
           </div>
 
           <div>
-            <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">Mot de passe</label>
+            <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">{{ t('common.password') }}</label>
             <input
               id="password"
               v-model="form.password"
               type="password"
               required
               class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400"
-              placeholder="••••••••"
+              :placeholder="t('auth.login.passwordPlaceholder')"
             />
           </div>
 
@@ -89,7 +89,7 @@
               :disabled="loading"
               class="w-full bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold py-3.5 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
-              {{ loading ? 'Inscription...' : "S'inscrire" }}
+              {{ loading ? t('auth.register.creating') : t('auth.register.button') }}
             </button>
           </div>
         </form>
@@ -102,9 +102,11 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useI18n } from 'vue-i18n'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const { t } = useI18n()
 
 const form = ref({
   firstName: '',
@@ -124,7 +126,7 @@ const handleRegister = async () => {
     await authStore.register(form.value)
     router.push({ name: 'verify-otp' })
   } catch (err: any) {
-    error.value = err.response?.data?.message || 'Erreur lors de l\'inscription'
+    error.value = err.response?.data?.message || t('errors.saveFailed')
   } finally {
     loading.value = false
   }
