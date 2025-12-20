@@ -141,10 +141,12 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useClientStore } from '@/stores/clients'
+import { useI18n } from 'vue-i18n'
 
 const route = useRoute()
 const router = useRouter()
 const clientsStore = useClientStore()
+const { t } = useI18n()
 
 const isEdit = computed(() => !!route.params.id)
 
