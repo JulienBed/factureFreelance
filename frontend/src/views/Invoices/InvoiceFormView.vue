@@ -227,10 +227,11 @@ onMounted(async () => {
   clients.value = clientsStore.clients
 
   if (isEdit.value) {
-    const invoice = await invoicesStore.fetchInvoice(Number(route.params.id))
+    await invoicesStore.fetchInvoice(Number(route.params.id))
+    const invoice = invoicesStore.currentInvoice
     if (invoice) {
       form.value = {
-        clientId: invoice.client.id,
+        clientId: String(invoice.client?.id || ''),
         status: invoice.status,
         issueDate: invoice.issueDate,
         dueDate: invoice.dueDate,
