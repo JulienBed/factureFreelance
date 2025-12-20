@@ -24,7 +24,14 @@ const handleLogin = async () => {
     await authStore.login({ email: email.value, password: password.value })
     router.push({ name: 'verify-otp', query: { email: email.value } })
   } catch (e: any) {
-    error.value = e.response?.data?.message || 'Erreur lors de la connexion'
+    // Gestion spécifique des erreurs 401 (identifiants incorrects)
+    if (e.response?.status === 401) {
+      error.value = 'Email ou mot de passe incorrect'
+    } else if (e.response?.status === 404) {
+      error.value = 'Utilisateur non trouvé. Veuillez créer un compte.'
+    } else {
+      error.value = e.response?.data?.message || 'Erreur lors de la connexion. Veuillez réessayer.'
+    }
   } finally {
     loading.value = false
   }
@@ -43,8 +50,17 @@ const handleLogin = async () => {
         </p>
       </div>
       <form class="mt-8 space-y-6" @submit.prevent="handleLogin">
-        <div v-if="error" class="rounded-md bg-red-50 p-4">
-          <p class="text-sm text-red-800">{{ error }}</p>
+        <div v-if="error" class="rounded-md bg-red-50 p-4 border border-red-200">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm font-medium text-red-800">{{ error }}</p>
+            </div>
+          </div>
         </div>
 
         <div class="rounded-md shadow-sm space-y-4">
