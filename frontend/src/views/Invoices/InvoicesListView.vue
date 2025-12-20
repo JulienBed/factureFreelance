@@ -72,9 +72,9 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useInvoicesStore } from '@/stores/invoices'
+import { useInvoiceStore } from '@/stores/invoices'
 
-const invoicesStore = useInvoicesStore()
+const invoicesStore = useInvoiceStore()
 const invoices = ref<any[]>([])
 
 const formatCurrency = (amount: number) => {

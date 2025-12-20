@@ -28,12 +28,13 @@ services:
       QUARKUS_DATASOURCE_USERNAME: postgres
       QUARKUS_DATASOURCE_PASSWORD: postgres
       QUARKUS_HTTP_CORS_ORIGINS: http://localhost:5173,http://localhost:3000
-      SMTP_HOST: ${SMTP_HOST}
-      SMTP_PORT: ${SMTP_PORT}
-      SMTP_USERNAME: ${SMTP_USERNAME}
-      SMTP_PASSWORD: ${SMTP_PASSWORD}
-      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
-      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      # SMTP and Google OAuth credentials (optional - set via .env file if needed)
+      # SMTP_HOST: ${SMTP_HOST:-}
+      # SMTP_PORT: ${SMTP_PORT:-}
+      # SMTP_USERNAME: ${SMTP_USERNAME:-}
+      # SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      # GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      # GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
     ports:
       - "8080:8080"
     depends_on:

@@ -121,11 +121,11 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useClientsStore } from '@/stores/clients'
+import { useClientStore } from '@/stores/clients'
 
 const route = useRoute()
 const router = useRouter()
-const clientsStore = useClientsStore()
+const clientsStore = useClientStore()
 
 const isEdit = computed(() => !!route.params.id)
 
