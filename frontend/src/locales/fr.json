@@ -124,6 +124,10 @@
       "taxRate": "TVA %",
       "notesPlaceholder": "Ajouter des notes ou conditions de paiement..."
     },
+    "actions": {
+      "downloadPdf": "Télécharger PDF",
+      "downloading": "Téléchargement..."
+    },
     "status": {
       "DRAFT": "Brouillon",
       "SENT": "Envoyée",

@@ -30,5 +30,22 @@ export const invoiceService = {
 
   async deleteInvoice(id: number): Promise<void> {
     await api.delete(`/invoices/${id}`)
+  },
+
+  async downloadPdf(id: number, invoiceNumber: string): Promise<void> {
+    const response = await api.get(`/invoices/${id}/pdf`, {
+      responseType: 'blob'
+    })
+
+    // Create a blob URL and trigger download
+    const blob = new Blob([response.data], { type: 'application/pdf' })
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `${invoiceNumber}_Factur-X.pdf`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url)
   }
 }

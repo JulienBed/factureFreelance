@@ -100,6 +100,19 @@ export const useInvoiceStore = defineStore('invoices', () => {
     }
   }
 
+  const downloadPdf = async (id: number, invoiceNumber: string) => {
+    loading.value = true
+    error.value = null
+    try {
+      await invoiceService.downloadPdf(id, invoiceNumber)
+    } catch (e: any) {
+      error.value = e.response?.data?.message || 'Failed to download PDF'
+      throw e
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     invoices,
     currentInvoice,
@@ -110,6 +123,7 @@ export const useInvoiceStore = defineStore('invoices', () => {
     createInvoice,
     updateInvoice,
     updateInvoiceStatus,
-    deleteInvoice
+    deleteInvoice,
+    downloadPdf
   }
 })
