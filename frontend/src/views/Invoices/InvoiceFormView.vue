@@ -22,7 +22,7 @@
             class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-900"
           >
             <option value="">{{ t('invoices.form.selectClient') }}</option>
-            <option v-for="client in clients" :key="client.id" :value="client.id">
+            <option v-for="client in clientsStore.clients" :key="client.id" :value="client.id">
               {{ client.companyName }}
             </option>
           </select>
@@ -218,7 +218,6 @@ const clientsStore = useClientStore()
 const { t } = useI18n()
 
 const isEdit = computed(() => !!route.params.id)
-const clients = ref<any[]>([])
 
 const form = ref({
   clientId: '',
@@ -263,7 +262,6 @@ const handleDownloadPdf = async () => {
 
 onMounted(async () => {
   await clientsStore.fetchClients()
-  clients.value = clientsStore.clients
 
   if (isEdit.value) {
     await invoicesStore.fetchInvoice(Number(route.params.id))
