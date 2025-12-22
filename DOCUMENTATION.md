@@ -87,8 +87,11 @@ factureFreelance/
 │       │              │        │PostgreSQL│    │
 │       │              │        └──────────┘    │
 │       │              │                         │
-│       │              └──────▶ Email Service   │
-│       │                                        │
+│       │              ├──────▶ Email Service   │
+│       │              │                         │
+│       │              ├──────▶ OpenSearch      │
+│       │              │        (PDF Indexing)   │
+│       │              │                         │
 │       └──────────────────────▶ Scheduler       │
 └─────────────────────────────────────────────────┘
 ```
@@ -214,7 +217,55 @@ factureFreelance/
 **Fichiers concernés :**
 - Backend : `Reminder.java`, `EmailService.java`
 
-### 5. 📊 Tableau de bord
+### 5. 🔍 Recherche plein texte avec OpenSearch
+
+#### Indexation automatique des PDFs
+- **Indexation automatique** : Chaque PDF généré est automatiquement indexé dans OpenSearch
+- **Extraction de texte** : Utilisation d'Apache Tika pour extraire le contenu textuel des PDFs
+- **Analyse française** : Analyseur français pour améliorer la pertinence de la recherche
+- **Métadonnées indexées** :
+  - Numéro de facture
+  - Nom du client
+  - Statut
+  - Montants
+  - Dates (émission, échéance)
+  - Contenu complet du PDF
+
+#### Recherche avancée
+- **Multi-champs** : Recherche simultanée dans le numéro, client, et contenu PDF
+- **Fuzzy search** : Correction automatique des fautes de frappe
+- **Filtrage utilisateur** : Isolation des résultats par utilisateur
+- **Limite de résultats** : 100 résultats maximum par requête
+
+#### Infrastructure
+- **OpenSearch 2.11.1** : Moteur de recherche distribué
+- **OpenSearch Dashboards** : Interface de visualisation (port 5601)
+- **Index** : `invoices` avec mapping optimisé pour les factures
+- **Sécurité** : Désactivée en développement, à activer en production
+
+**Endpoints API :**
+- `GET /api/invoices/search?q={query}` - Rechercher dans les factures
+
+**Configuration :**
+```properties
+opensearch.host=localhost
+opensearch.port=9200
+opensearch.scheme=http
+opensearch.index.invoices=invoices
+```
+
+**Fichiers concernés :**
+- Backend : `OpenSearchService.java`, `PdfService.java`, `InvoiceResource.java`
+- Docker : `docker-compose.yml` (services opensearch et opensearch-dashboards)
+- Dependencies : `opensearch-java`, `opensearch-rest-client`, `tika-core`, `tika-parsers-standard-package`
+
+**Exemple de recherche :**
+```bash
+curl -H "Authorization: Bearer {token}" \
+  "http://localhost:8080/api/invoices/search?q=ACME"
+```
+
+### 6. 📊 Tableau de bord
 
 - Vue d'ensemble de l'activité
 - Statistiques clés :
@@ -228,7 +279,7 @@ factureFreelance/
 **Fichiers concernés :**
 - Frontend : `DashboardView.vue`
 
-### 6. ⚙️ Paramètres
+### 7. ⚙️ Paramètres
 
 - Page de configuration utilisateur
 - Gestion du profil

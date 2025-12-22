@@ -3,6 +3,7 @@ package com.facture.service;
 import com.facture.entity.Invoice;
 import com.facture.entity.InvoiceItem;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -27,6 +28,9 @@ public class PdfService {
     private static final Logger logger = Logger.getLogger(PdfService.class);
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
+    @Inject
+    OpenSearchService openSearchService;
+
     public byte[] generateFacturXPdf(Invoice invoice) throws IOException {
         logger.infof("Generating Factur-X PDF for invoice: %s", invoice.invoiceNumber);
 
@@ -47,8 +51,18 @@ public class PdfService {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         exporter.export(outputStream);
 
+        byte[] pdfBytes = outputStream.toByteArray();
+
+        // 6. Index PDF in OpenSearch for full-text search
+        try {
+            openSearchService.indexInvoice(invoice, pdfBytes);
+        } catch (Exception e) {
+            logger.warnf("Failed to index invoice %s in OpenSearch: %s", invoice.invoiceNumber, e.getMessage());
+            // Don't fail PDF generation if indexing fails
+        }
+
         logger.infof("Factur-X PDF generated successfully for invoice: %s", invoice.invoiceNumber);
-        return outputStream.toByteArray();
+        return pdfBytes;
     }
 
     private byte[] createVisualPdf(Invoice invoice) throws IOException {

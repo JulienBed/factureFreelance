@@ -6,6 +6,7 @@ import com.facture.entity.Invoice;
 import com.facture.entity.InvoiceStatus;
 import com.facture.service.InvoiceService;
 import com.facture.service.PdfService;
+import com.facture.service.OpenSearchService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -16,6 +17,7 @@ import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.jboss.logging.Logger;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Path("/api/invoices")
 @Produces(MediaType.APPLICATION_JSON)
@@ -31,6 +33,9 @@ public class InvoiceResource {
 
     @Inject
     PdfService pdfService;
+
+    @Inject
+    OpenSearchService openSearchService;
 
     @Inject
     JsonWebToken jwt;
@@ -143,6 +148,45 @@ public class InvoiceResource {
             logger.errorf("Error sending invoice %d: %s", id, e.getMessage(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"message\": \"Error sending invoice: " + e.getMessage() + "\"}")
+                    .build();
+        }
+    }
+
+    @GET
+    @Path("/search")
+    public Response searchInvoices(@QueryParam("q") String query) {
+        Long userId = Long.parseLong(jwt.getSubject());
+
+        try {
+            if (query == null || query.trim().isEmpty()) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("{\"message\": \"Query parameter 'q' is required\"}")
+                        .build();
+            }
+
+            // Search in OpenSearch
+            List<Long> invoiceIds = openSearchService.searchInvoices(userId, query);
+
+            // Fetch invoice DTOs for the found IDs
+            List<InvoiceDto> invoices = invoiceIds.stream()
+                    .map(id -> {
+                        try {
+                            return invoiceService.getInvoiceById(userId, id);
+                        } catch (Exception e) {
+                            logger.warnf("Invoice %d found in search but not accessible: %s", id, e.getMessage());
+                            return null;
+                        }
+                    })
+                    .filter(inv -> inv != null)
+                    .collect(Collectors.toList());
+
+            logger.infof("Search for '%s' returned %d results for user %d", query, invoices.size(), userId);
+            return Response.ok(invoices).build();
+
+        } catch (Exception e) {
+            logger.errorf("Error searching invoices: %s", e.getMessage(), e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"message\": \"Error searching invoices: " + e.getMessage() + "\"}")
                     .build();
         }
     }

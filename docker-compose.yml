@@ -17,6 +17,50 @@ services:
       timeout: 5s
       retries: 5
 
+  # OpenSearch for PDF indexing and search
+  opensearch:
+    image: opensearchproject/opensearch:2.11.1
+    container_name: facture-opensearch
+    environment:
+      - cluster.name=facture-cluster
+      - node.name=facture-node
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "DISABLE_INSTALL_DEMO_CONFIG=true"
+      - "DISABLE_SECURITY_PLUGIN=true"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+    volumes:
+      - opensearch_data:/usr/share/opensearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # OpenSearch Dashboards (optional - for visualization)
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:2.11.1
+    container_name: facture-dashboards
+    environment:
+      - 'OPENSEARCH_HOSTS=["http://opensearch:9200"]'
+      - "DISABLE_SECURITY_DASHBOARDS_PLUGIN=true"
+    ports:
+      - "5601:5601"
+    depends_on:
+      opensearch:
+        condition: service_healthy
+    restart: unless-stopped
+
   # Backend Quarkus API
   backend:
     build:
@@ -28,6 +72,8 @@ services:
       QUARKUS_DATASOURCE_USERNAME: postgres
       QUARKUS_DATASOURCE_PASSWORD: postgres
       QUARKUS_HTTP_CORS_ORIGINS: http://localhost:5173,http://localhost:3000
+      OPENSEARCH_HOST: opensearch
+      OPENSEARCH_PORT: 9200
       # SMTP and Google OAuth credentials (optional - set via .env file if needed)
       # SMTP_HOST: ${SMTP_HOST:-}
       # SMTP_PORT: ${SMTP_PORT:-}
@@ -39,6 +85,8 @@ services:
       - "8080:8080"
     depends_on:
       postgres:
+        condition: service_healthy
+      opensearch:
         condition: service_healthy
     restart: unless-stopped
 
@@ -61,4 +109,6 @@ services:
 
 volumes:
   postgres_data:
+    driver: local
+  opensearch_data:
     driver: local
