@@ -17,6 +17,14 @@ public class User extends PanacheEntityBase {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
 
+    /**
+     * Tenant ID for multi-tenancy support
+     * Each user belongs to one tenant (for future cabinet/team features)
+     * Default: user's own ID (self-tenant)
+     */
+    @Column(name = "tenant_id", nullable = false)
+    public Long tenantId;
+
     @NotBlank(message = "Email is required")
     @Email(message = "Email should be valid")
     @Column(unique = true, nullable = false)
@@ -86,6 +94,19 @@ public class User extends PanacheEntityBase {
     public void prePersist() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
+        // By default, each user is their own tenant
+        if (tenantId == null) {
+            tenantId = id;
+        }
+    }
+
+    @PostPersist
+    public void postPersist() {
+        // Set tenantId to user's own ID if not already set (for solo users)
+        if (tenantId == null) {
+            tenantId = id;
+            persist();
+        }
     }
 
     @PreUpdate

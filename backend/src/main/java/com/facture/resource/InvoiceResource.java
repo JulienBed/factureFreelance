@@ -1,10 +1,10 @@
 package com.facture.resource;
 
+import com.facture.application.service.InvoiceApplicationService;
 import com.facture.dto.CreateInvoiceRequest;
 import com.facture.dto.InvoiceDto;
 import com.facture.entity.Invoice;
 import com.facture.entity.InvoiceStatus;
-import com.facture.service.InvoiceService;
 import com.facture.service.PdfService;
 import com.facture.service.OpenSearchService;
 import jakarta.annotation.security.RolesAllowed;
@@ -29,7 +29,7 @@ public class InvoiceResource {
     Logger logger;
 
     @Inject
-    InvoiceService invoiceService;
+    InvoiceApplicationService invoiceService;
 
     @Inject
     PdfService pdfService;
@@ -43,7 +43,7 @@ public class InvoiceResource {
     @GET
     public Response getInvoices(@QueryParam("status") InvoiceStatus status) {
         Long userId = Long.parseLong(jwt.getSubject());
-        List<InvoiceDto> invoices = invoiceService.getInvoicesByUserId(userId, status);
+        List<InvoiceDto> invoices = invoiceService.getInvoicesByTenantId(userId, status);
         return Response.ok(invoices).build();
     }
 
