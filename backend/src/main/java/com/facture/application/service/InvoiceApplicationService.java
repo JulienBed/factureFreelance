@@ -8,7 +8,6 @@ import com.facture.domain.service.InvoiceDomainService;
 import com.facture.dto.CreateInvoiceRequest;
 import com.facture.dto.InvoiceDto;
 import com.facture.entity.*;
-import io.quarkus.vertx.ConsumeEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
