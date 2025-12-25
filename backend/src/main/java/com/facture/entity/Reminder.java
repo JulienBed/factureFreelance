@@ -21,23 +21,32 @@ public class Reminder extends PanacheEntityBase {
     @Column(nullable = false)
     public ReminderType type = ReminderType.AUTO;
 
-    @Column(name = "sent_at", nullable = false)
+    @Column(name = "scheduled_at", nullable = false)
+    public LocalDateTime scheduledAt;
+
+    @Column(name = "sent_at")
     public LocalDateTime sentAt;
+
+    @Column(nullable = false)
+    public boolean sent = false;
 
     @Column(name = "sent_by")
     public String sentBy;
+
+    @Column(length = 500)
+    public String description;
 
     @Column(length = 2000)
     public String message;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    public ReminderStatus status = ReminderStatus.SENT;
+    public ReminderStatus status = ReminderStatus.PENDING;
 
     @PrePersist
     public void prePersist() {
-        if (sentAt == null) {
-            sentAt = LocalDateTime.now();
+        if (scheduledAt == null) {
+            scheduledAt = LocalDateTime.now();
         }
     }
 
@@ -55,6 +64,7 @@ public class Reminder extends PanacheEntityBase {
     }
 
     public enum ReminderStatus {
+        PENDING,
         SENT,
         FAILED
     }

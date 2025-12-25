@@ -21,8 +21,9 @@ public class User extends PanacheEntityBase {
      * Tenant ID for multi-tenancy support
      * Each user belongs to one tenant (for future cabinet/team features)
      * Default: user's own ID (self-tenant)
+     * Nullable during creation, set in @PostPersist
      */
-    @Column(name = "tenant_id", nullable = false)
+    @Column(name = "tenant_id")
     public Long tenantId;
 
     @NotBlank(message = "Email is required")
@@ -94,10 +95,6 @@ public class User extends PanacheEntityBase {
     public void prePersist() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
-        // By default, each user is their own tenant
-        if (tenantId == null) {
-            tenantId = id;
-        }
     }
 
     @PostPersist
